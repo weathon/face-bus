@@ -90,8 +90,9 @@ def onboard(a: Onboard):
         return "No QR-Code"
     card = value.split(",")[0]
     if not card:
-        card = '1234'
-    set_history(card, a.vehicle_type, a.bus_number, a.stop, time.time())
+        card = 'anonymous'
+    # https://www.geeksforgeeks.org/python-strftime-function/
+    set_history(card, a.vehicle_type, a.bus_number, a.stop, time.time().strftime("%Y-%m-%d %H:%M"))
     res = json.loads(r.get(card))
 
     if value.split(",")[1] == "pass":
@@ -141,7 +142,10 @@ def link_card(card):
 
 @app.get("/history")
 def history(card: str | None = Cookie(default=None)):
-    his = json.loads(r.get('history'))[card]
+    try:
+        his = json.loads(r.get('history'))[card]
+    except:
+        return []
     return his
     
 
