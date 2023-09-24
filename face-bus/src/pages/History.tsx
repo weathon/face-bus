@@ -29,12 +29,12 @@ import { qrCodeOutline, cashOutline, ticketOutline, train, trainOutline, analyti
 import './Home.css';
 import { OverlayEventDetail } from '@ionic/core/components';
 import { setSourceMapRange } from 'typescript';
-
+const data = [["bus", 90, "UBCO", "July 23, 2023 3:20pm"],["Train", 8, "Downtown", "July 23, 2023 3:20pm"],["Train", 8, "Downtown", "July 23, 2023 3:20pm"],["Train", 8, "Downtown", "July 23, 2023 3:20pm"],["Train", 8, "Downtown", "July 23, 2023 3:20pm"],["Train", 8, "Downtown", "July 23, 2023 3:20pm"]]
 
 
 const History: React.FC = () => {
 
-
+ 
   return (
     <IonPage>
     <IonHeader>
@@ -49,50 +49,22 @@ const History: React.FC = () => {
           </IonToolbar>
         </IonHeader>
         
-        <IonCard color="primary">
+        {data.map(x=>(
+            <IonCard color="primary">
           <IonCardContent>
           
-            <IonIcon icon={busOutline} size="large" />
-
-      
-            <h2>Route Number: 123</h2>
-
-            <p>Bus Stop: Main Street</p>
-
-            
-            <p>Time: 10:00 AM</p>
+            <IonIcon icon={busOutline} size="large" />      
+            <h2>Route Number: {x[1]}</h2>
+            <p>Stop: {x[2]}t</p>
+            <p>Date and Time: {x[3]}</p>
           </IonCardContent>
         </IonCard>
 
-        <IonCard  color="secondary">
-          <IonCardContent>
+          ))}
           
-            <IonIcon icon={trainOutline} size="large" />
+        
 
-      
-            <h2>Route Number: 123</h2>
-
-            <p>Bus Stop: Main Street</p>
-
-            
-            <p>Time: 10:00 AM</p>
-          </IonCardContent>
-        </IonCard>
-
-        <IonCard color="tertiary">
-          <IonCardContent>
-          
-            <IonIcon icon={boatOutline} size="large" />
-
-      
-            <h2>Route Number: 123</h2>
-
-            <p>Bus Stop: Main Street</p>
-
-            
-            <p>Time: 10:00 AM</p>
-          </IonCardContent>
-        </IonCard>
+       
 
 
       </IonContent>
