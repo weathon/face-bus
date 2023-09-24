@@ -29,12 +29,19 @@ import { qrCodeOutline, cashOutline, ticketOutline, train, trainOutline, analyti
 import './Home.css';
 import { OverlayEventDetail } from '@ionic/core/components';
 import { setSourceMapRange } from 'typescript';
-const data = [["bus", 90, "UBCO", "July 23, 2023 3:20pm"],["Train", 8, "Downtown", "July 23, 2023 3:20pm"],["Train", 8, "Downtown", "July 23, 2023 3:20pm"],["Train", 8, "Downtown", "July 23, 2023 3:20pm"],["Train", 8, "Downtown", "July 23, 2023 3:20pm"],["Train", 8, "Downtown", "July 23, 2023 3:20pm"]]
+// const data = [["bus", 90, "UBCO", "July 23, 2023 3:20pm"],["Train", 8, "Downtown", "July 23, 2023 3:20pm"],["Train", 8, "Downtown", "July 23, 2023 3:20pm"],["Train", 8, "Downtown", "July 23, 2023 3:20pm"],["Train", 8, "Downtown", "July 23, 2023 3:20pm"],["Train", 8, "Downtown", "July 23, 2023 3:20pm"]]
 
 
 const History: React.FC = () => {
+  const [d, setData] = useState([]);
 
- 
+ useEffect(()=>{
+  fetch("https://8000-weathon-facebus-qiqi4k0uqz8.ws-us104.gitpod.io/history",{credentials: 'include'})      .then(x => x.json())
+  .then(data => {
+    setData(d)
+  }
+  )
+ },[])
   return (
     <IonPage>
     <IonHeader>
@@ -49,7 +56,7 @@ const History: React.FC = () => {
           </IonToolbar>
         </IonHeader>
         
-        {data.map(x=>(
+        {d.map(x=>(
             <IonCard color="primary">
           <IonCardContent>
           
