@@ -161,24 +161,24 @@ lock = threading.Lock()
 
 
 fakedata = [
-    ["bus", 90, "UBCO", "Sept 23, 2023 3:20pm"],
-    ["bus", 90, "UBCO", "Sept 23, 2023 3:20pm"],
-    ["bus", 90, "UBCO", "Sept 23, 2023 3:20pm"],
-    ["bus", 90, "UBCO", "Sept 23, 2023 3:20pm"],
-    ["train", 8, "Downtown", "Sept 23, 2023 3:20pm"],
-    ["ferry", 15, "Island", "Sept 23, 2023 4:00pm"],
-    ["bus", 45, "Airport", "Sept 23, 2023 4:30pm"],
-    ["bus", 45, "Airport", "Sept 23, 2023 4:30pm"],
-    ["bus", 45, "Airport", "Sept 23, 2023 4:30pm"],
-    ["bus", 45, "Airport", "Sept 23, 2023 4:30pm"],
-    ["train", 12, "Central Station", "Sept 23, 2023 5:00pm"],
-    ["bus", 60, "Mall", "Sept 23, 2023 5:45pm"],
-    ["bus", 60, "Mall", "Sept 23, 2023 5:45pm"],
-    ["bus", 60, "Mall", "Sept 23, 2023 5:45pm"],
-    ["bus", 60, "Mall", "Sept 23, 2023 5:45pm"],
-    ["bus", 60, "Mall", "Sept 23, 2023 5:45pm"],
-    ["ferry", 20, "Harbor", "Sept 23, 2023 6:10pm"],
-    ["ferry", 20, "Harbor", "Sept 23, 2023 6:10pm"],
+    ["bus", 90, "UBCO", "September 23, 2023 3:20pm"],
+    ["bus", 90, "UBCO", "September 23, 2023 3:20pm"],
+    ["bus", 90, "UBCO", "September 23, 2023 3:20pm"],
+    ["bus", 90, "UBCO", "September 23, 2023 3:20pm"],
+    ["train", 8, "Downtown", "September 23, 2023 3:20pm"],
+    ["ferry", 15, "Island", "September 23, 2023 4:00pm"],
+    ["bus", 45, "Airport", "September 23, 2023 4:30pm"],
+    ["bus", 45, "Airport", "September 23, 2023 4:30pm"],
+    ["bus", 45, "Airport", "September 23, 2023 4:30pm"],
+    ["bus", 45, "Airport", "September 23, 2023 4:30pm"],
+    ["train", 12, "Central Station", "September 23, 2023 5:00pm"],
+    ["bus", 60, "Mall", "September 23, 2023 5:45pm"],
+    ["bus", 60, "Mall", "September 23, 2023 5:45pm"],
+    ["bus", 60, "Mall", "September 23, 2023 5:45pm"],
+    ["bus", 60, "Mall", "September 23, 2023 5:45pm"],
+    ["bus", 60, "Mall", "September 23, 2023 5:45pm"],
+    ["ferry", 20, "Harbor", "September 23, 2023 6:10pm"],
+    ["ferry", 20, "Harbor", "September 23, 2023 6:10pm"],
     ["ferry", 20, "Harbor", "July 23, 2023 6:10pm"],
     ["ferry", 20, "Harbor", "July 23, 2023 6:10pm"],
     ["ferry", 20, "Harbor", "July 23, 2023 6:10pm"],
@@ -202,98 +202,138 @@ fakedata = [
     ["ferry", 9, "North Beach", "July 23, 2023 7:20pm"]
 ]
 
+# https://www.tutorialspoint.com/how-to-join-two-images-horizontally-and-vertically-using-opencv-python#:~:text=The%20function%20cv2.,join%20two%20or%20more%20images
 @app.get("/center_chart")
-def charts(id):#id is str, not int
+def charts():#id is str, not int
     # global lock
     # lock.acquire()
-    id = int(id)
+    img_list = []
     buffer = io.BytesIO()
     data = json.loads(r.get('history'))
     if len(data)==0:
          data = fakedata
-    if id == 2:
-        modes = [entry[0].capitalize() for entry in data]
-        pylab.figure(figsize=(8, 5))
+    
+    modes = [entry[0].capitalize() for entry in data]
+    pylab.figure(figsize=(8, 5))
 
-        sns.countplot(x=modes, palette="Set3")
-        pylab.xlabel("Transportation Mode")
-        pylab.ylabel("Count")
-        pylab.title("Distribution of Transportation Modes")
-        #pylab.show()
-        pylab.savefig(buffer)
-        
-    elif id==3:
-        passenger_counts = [entry[1] for entry in data]
-        pylab.figure(figsize=(8, 5))
-        modes = [entry[0].capitalize() for entry in data]
-
-        sns.boxplot(x=modes, y=passenger_counts, palette="Set2")
-        pylab.xlabel("Transportation Mode")
-        pylab.ylabel("Passenger Count")
-        pylab.title("Distribution of Passenger Counts by Transportation Mode")
-        #pylab.show()
-        pylab.savefig(buffer)
-
-    elif id==4:
-
-        locations = [entry[2] for entry in data]
-        pylab.figure(figsize=(8, 5))
+    sns.countplot(x=modes, palette="Set3")
+    pylab.xlabel("Transportation Mode")
+    pylab.ylabel("Count")
+    pylab.title("Distribution of Transportation Modes")
+    #pylab.show()
+    # buffer.clear()
+    pylab.savefig("tmp.png")
+    
+    # im_arr = np.frombuffer(buffer.getvalue(), dtype=np.uint8)
+    pylab.clf()
+    # img = cv2.imdecode(im_arr, flags=cv2.IMREAD_COLOR)
+    img = cv2.imread("tmp.png")
+    img_list.append(img)
 
 
-        sns.countplot(y=locations, palette="viridis", order=pd.value_counts(locations).index)
-        pylab.xlabel("Count")
-        pylab.ylabel("Location")
-        pylab.title("Frequency of Locations")
-        #pylab.show()
-        pylab.savefig(buffer)
-    elif id==5:
+    passenger_counts = [entry[1] for entry in data]
+    pylab.figure(figsize=(8, 5))
+    modes = [entry[0].capitalize() for entry in data]
 
-        modes = [entry[0].capitalize() for entry in data]
+    sns.boxplot(x=modes, y=passenger_counts, palette="Set2")
+    pylab.xlabel("Transportation Mode")
+    pylab.ylabel("Passenger Count")
+    pylab.title("Distribution of Passenger Counts by Transportation Mode")
+    #pylab.show()
+    # buffer.clear()
+    pylab.savefig("tmp.png")
 
-        pylab.figure(figsize=(8, 5))
-
-        pylab.pie(pd.value_counts(modes), labels=pd.value_counts(modes).index, autopct='%1.1f%%', startangle=140)
-        pylab.axis('equal')
-        pylab.title("Distribution of Transportation Modes")
-        #pylab.show()
-        pylab.savefig(buffer)
-    elif id==6:
-        locations = [entry[2] for entry in data]
-        passenger_counts = [entry[1] for entry in data]
-        modes = [entry[0].capitalize() for entry in data]
-
-        pylab.figure(figsize=(8, 5))
-        sns.scatterplot(x=locations, y=passenger_counts, hue=modes, palette="Set2")
-        pylab.xlabel("Location")
-        pylab.ylabel("Passenger Count")
-        pylab.title("Passenger Counts vs. Locations")
-        pylab.xticks(rotation=45)
-        #pylab.show()
-        pylab.savefig(buffer)
-
-    elif id==1:
-        modes = [entry[0].capitalize() for entry in data]
-        passenger_counts = [entry[1] for entry in data]
-        locations = [entry[2] for entry in data]
-        timestamps = [datetime.strptime(entry[3], "%B %d, %Y %I:%M%p") for entry in data]
+    # im_arr = np.frombuffer(buffer.getvalue(), dtype=np.uint8)
+    pylab.clf()
+    # img = cv2.imdecode(im_arr, flags=cv2.IMREAD_COLOR)
+    img = cv2.imread("tmp.png")
+    img_list.append(img)
 
 
-        df = pd.DataFrame({'Hour': [ts.hour for ts in timestamps], 'Mode': modes, 'Passenger Count': passenger_counts})
-        hourly_mode_counts = df.groupby(['Hour', 'Mode']).size().unstack().fillna(0)
+    locations = [entry[2] for entry in data]
+    pylab.figure(figsize=(8, 5))
 
-        pylab.figure(figsize=(8, 5))
 
-        sns.heatmap(hourly_mode_counts, cmap="YlGnBu")
-        pylab.xlabel("Transportation Mode")
-        pylab.ylabel("Hour of the Day")
-        pylab.title("Passenger Counts by Hour and Transportation Mode")
-        #pylab.show()
-        pylab.savefig(buffer)
-    else:
-        print("I am lost")
-        return "Wrong ID"
+    sns.countplot(y=locations, palette="viridis", order=pd.value_counts(locations).index)
+    pylab.xlabel("Count")
+    pylab.ylabel("Location")
+    pylab.title("Frequency of Locations")
+    #pylab.show()
+    # buffer.clear()
+    pylab.savefig("tmp.png")
+
+    # im_arr = np.frombuffer(buffer.getvalue(), dtype=np.uint8)
+    pylab.clf()
+    # img = cv2.imdecode(im_arr, flags=cv2.IMREAD_COLOR)
+    img = cv2.imread("tmp.png")
+    img_list.append(img)
+
+    modes = [entry[0].capitalize() for entry in data]
+
+    pylab.figure(figsize=(8, 5))
+
+    pylab.pie(pd.value_counts(modes), labels=pd.value_counts(modes).index, autopct='%1.1f%%', startangle=140)
+    pylab.axis('equal')
+    pylab.title("Distribution of Transportation Modes")
+    #pylab.show()
+    # buffer.clear()
+    pylab.savefig("tmp.png")
+
+    # im_arr = np.frombuffer(buffer.getvalue(), dtype=np.uint8)
+    pylab.clf()
+    # img = cv2.imdecode(im_arr, flags=cv2.IMREAD_COLOR)
+    img = cv2.imread("tmp.png")
+    img_list.append(img)
+    locations = [entry[2] for entry in data]
+    passenger_counts = [entry[1] for entry in data]
+    modes = [entry[0].capitalize() for entry in data]
+
+    pylab.figure(figsize=(8, 5))
+    sns.scatterplot(x=locations, y=passenger_counts, hue=modes, palette="Set2")
+    pylab.xlabel("Location")
+    pylab.ylabel("Passenger Count")
+    pylab.title("Passenger Counts vs. Locations")
+    pylab.xticks(rotation=45)
+    #pylab.show()
+    # buffer.clear()
+    pylab.savefig("tmp.png")
+
+    # im_arr = np.frombuffer(buffer.getvalue(), dtype=np.uint8)
+    pylab.clf()
+    # img = cv2.imdecode(im_arr, flags=cv2.IMREAD_COLOR)
+    img = cv2.imread("tmp.png")
+    img_list.append(img)
+
+    modes = [entry[0].capitalize() for entry in data]
+    passenger_counts = [entry[1] for entry in data]
+    locations = [entry[2] for entry in data]
+    timestamps = [datetime.strptime(entry[3], "%B %d, %Y %I:%M%p") for entry in data]
+
+
+    df = pd.DataFrame({'Hour': [ts.hour for ts in timestamps], 'Mode': modes, 'Passenger Count': passenger_counts})
+    hourly_mode_counts = df.groupby(['Hour', 'Mode']).size().unstack().fillna(0)
+
+    pylab.figure(figsize=(8, 5))
+
+    sns.heatmap(hourly_mode_counts, cmap="YlGnBu")
+    pylab.xlabel("Transportation Mode")
+    pylab.ylabel("Hour of the Day")
+    pylab.title("Passenger Counts by Hour and Transportation Mode")
+    #pylab.show()
+    # buffer.clear()
+    pylab.savefig("tmp.png")
+
+    # im_arr = np.frombuffer(buffer.getvalue(), dtype=np.uint8)
+    pylab.clf()
+    # img = cv2.imdecode(im_arr, flags=cv2.IMREAD_COLOR)
+    img = cv2.imread("tmp.png")
+    img_list.append(img)
+
     # lock.release()
-    return Response(buffer.getvalue())
+    img = cv2.vconcat(img_list)
+    cv2.imwrite("tmp.png", img)
+
+    return FileResponse("tmp.png")
 
 
 import openai
