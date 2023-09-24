@@ -1,6 +1,10 @@
 {
   "dependencies": {
+<<<<<<< HEAD
     "g": "^2.0.1",
     "ionic": "^5.4.16"
+=======
+    "webcam-easy": "^1.1.1"
+>>>>>>> center
   }
 }

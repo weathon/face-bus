@@ -40,7 +40,7 @@ const Face: React.FC = () => {
   const handleSubmit = () => {
     
     console.log('Card Number Entered:', cardNumber);
-    fetch("https://8000-weathon-facebus-qiqi4k0uqz8.ws-us104.gitpod.io/link_card?card="+cardNumber, {credentials: 'include'})      .then(x => x.json())
+    fetch("https://8000-weathon-facebus-qiqi4k0uqz8.ws-us104.gitpod.io/link_card?card="+cardNumber, {credentials: 'include'}).then(x => x.json())
     .then(data => {
       alert("Linked with "+cardNumber)
     }
