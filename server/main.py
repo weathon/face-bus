@@ -156,15 +156,61 @@ import seaborn as sns
 
 from datetime import datetime
 import pandas as pd
+import threading
+lock = threading.Lock()
+
+
+fakedata = [
+    ["bus", 90, "UBCO", "Sept 23, 2023 3:20pm"],
+    ["bus", 90, "UBCO", "Sept 23, 2023 3:20pm"],
+    ["bus", 90, "UBCO", "Sept 23, 2023 3:20pm"],
+    ["bus", 90, "UBCO", "Sept 23, 2023 3:20pm"],
+    ["train", 8, "Downtown", "Sept 23, 2023 3:20pm"],
+    ["ferry", 15, "Island", "Sept 23, 2023 4:00pm"],
+    ["bus", 45, "Airport", "Sept 23, 2023 4:30pm"],
+    ["bus", 45, "Airport", "Sept 23, 2023 4:30pm"],
+    ["bus", 45, "Airport", "Sept 23, 2023 4:30pm"],
+    ["bus", 45, "Airport", "Sept 23, 2023 4:30pm"],
+    ["train", 12, "Central Station", "Sept 23, 2023 5:00pm"],
+    ["bus", 60, "Mall", "Sept 23, 2023 5:45pm"],
+    ["bus", 60, "Mall", "Sept 23, 2023 5:45pm"],
+    ["bus", 60, "Mall", "Sept 23, 2023 5:45pm"],
+    ["bus", 60, "Mall", "Sept 23, 2023 5:45pm"],
+    ["bus", 60, "Mall", "Sept 23, 2023 5:45pm"],
+    ["ferry", 20, "Harbor", "Sept 23, 2023 6:10pm"],
+    ["ferry", 20, "Harbor", "Sept 23, 2023 6:10pm"],
+    ["ferry", 20, "Harbor", "July 23, 2023 6:10pm"],
+    ["ferry", 20, "Harbor", "July 23, 2023 6:10pm"],
+    ["ferry", 20, "Harbor", "July 23, 2023 6:10pm"],
+    ["train", 5, "City Park", "July 23, 2023 6:40pm"],
+    ["train", 5, "City Park", "July 23, 2023 6:40pm"],
+    ["train", 5, "City Park", "July 23, 2023 6:40pm"],
+    ["train", 5, "City Park", "July 23, 2023 6:40pm"],
+    ["train", 5, "City Park", "July 23, 2023 6:40pm"],
+    ["train", 5, "City Park", "July 23, 2023 6:40pm"],
+    ["bus", 78, "Library", "July 23, 2023 7:00pm"],
+    ["bus", 78, "Library", "July 23, 2023 7:00pm"],
+    ["bus", 78, "Library", "July 23, 2023 7:00pm"],
+    ["bus", 78, "Library", "July 23, 2023 7:00pm"],
+    ["bus", 78, "Library", "July 23, 2023 7:00pm"],
+    ["ferry", 9, "North Beach", "July 23, 2023 7:20pm"],
+    ["ferry", 9, "North Beach", "July 23, 2023 7:20pm"],
+    ["ferry", 9, "North Beach", "July 23, 2023 7:20pm"],
+    ["ferry", 9, "North Beach", "July 23, 2023 7:20pm"],
+    ["ferry", 9, "North Beach", "July 23, 2023 7:20pm"],
+    ["ferry", 9, "North Beach", "July 23, 2023 7:20pm"],
+    ["ferry", 9, "North Beach", "July 23, 2023 7:20pm"]
+]
 
 @app.get("/center_chart")
 def charts(id):#id is str, not int
+    # global lock
+    # lock.acquire()
     id = int(id)
     buffer = io.BytesIO()
-    try:
-        data = json.loads(r.get('history'))
-    except:
-        data = []
+    data = json.loads(r.get('history'))
+    if len(data)==0:
+         data = fakedata
     if id == 2:
         modes = [entry[0].capitalize() for entry in data]
         pylab.figure(figsize=(8, 5))
@@ -246,6 +292,7 @@ def charts(id):#id is str, not int
     else:
         print("I am lost")
         return "Wrong ID"
+    # lock.release()
     return Response(buffer.getvalue())
 
 
