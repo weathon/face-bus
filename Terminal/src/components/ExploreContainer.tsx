@@ -20,7 +20,9 @@ const ExploreContainer: React.FC<ContainerProps> = () => {
       },
       body: JSON.stringify({
         "img":picture,
-        "bus_number":8
+        "bus_number":8,
+        "stop": "Stadium-Chinatown",
+        "vehicle_type": "bus"
       }),
     }).then(response => response.json()).then(
       (x)=>{

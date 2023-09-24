@@ -1,6 +1,7 @@
 from typing import Union
 
 from fastapi import FastAPI, Response, Cookie
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 import cv2
 import numpy as np
@@ -14,10 +15,9 @@ import redis
 import json
 r = redis.Redis(host="redis-16133.c273.us-east-1-2.ec2.cloud.redislabs.com", port=16133,
                 password="H41MjXV2UTl5rNnTGQYEvWqTYSZD36mm", db=0, decode_responses=True)
+import time
 
-
-# for demo only, slow, data is volatile, and not secure
-# wait, this could be on redis, and we can get a great prize
+# for demo only, slow, the password should NOT be like this
 
 
 hasPass = 0
@@ -38,6 +38,13 @@ r.set('3450-8919-1201-0847',     json.dumps({
     "points": 8598
 }))
 
+r.set('history', "{}")
+def set_history(card, Vtype, bus, stop, time):
+    #demo only, bad perfomance
+    old = json.loads(r.get('history'))
+    old[card].append([Vtype, bus, stop, time])
+    r.set('history', json.dumps(old))
+
 # print(r.get('10932'))
 
 app = FastAPI()
@@ -53,6 +60,8 @@ app.add_middleware(
 
 class Onboard(BaseModel):
     bus_number: int
+    stop: str
+    vehicle_type: str
     img: str
 
 
@@ -76,7 +85,7 @@ def onboard(a: Onboard):
     if value == "":  # no qrcode, detect face
         return "No QR-Code"
     card = value.split(",")[0]
-
+    set_history(a.vehicle_type, card, a.bus_number, a.stop, time.time())
     res = r.get(card)
 
     if value.split(",")[1] == "pass":
@@ -110,8 +119,24 @@ def qr(source, card: str | None = Cookie(default=None)):
 def balance_and_pass(card: str | None = Cookie(default=None)):
     # return ['No Pass', balance, points]
     if not card:
-        return ["...","...","..."]
+        return ["No Card","No Card","No Card"]
     res = r.get(card)
     data = json.loads(res)
     return ['No Pass' if not data["hasPass"] else "Valid Pass", data["balance"], data["points"]]
     # return ['No Pass' if not hasPass else "Valid Pass", str(round(balance, 2)), str(points)]
+
+
+@app.get("/link_card")
+def link_card(card):
+    response = JSONResponse(content="OK")
+    response.set_cookie(key="card", value=card, samesite="Lax", secure=True, httponly=True)
+    return response
+
+
+@app.get("/history")
+def history(card: str | None = Cookie(default=None)):
+    his = json.loads(r.get('history'))[card]
+    return his
+    
+
+    
