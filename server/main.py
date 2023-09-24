@@ -38,7 +38,7 @@ r.set('1234',     json.dumps({
     "points": 8598
 }))
 
-r.set('history', "{}")
+# r.set('history', "{}")
 def set_history(card, Vtype, bus, stop, time):
     #demo only, bad perfomance
     old = json.loads(r.get('history'))
@@ -150,52 +150,21 @@ def history(card: str | None = Cookie(default=None)):
     
 
 import pylab
+import seaborn as sns
 
-data = [
-    ["bus", 90, "UBCO", "July 23, 2023 3:20pm"],
-    ["bus", 90, "UBCO", "July 23, 2023 3:20pm"],
-    ["bus", 90, "UBCO", "July 23, 2023 3:20pm"],
-    ["bus", 90, "UBCO", "July 23, 2023 3:20pm"],
-    ["train", 8, "Downtown", "July 23, 2023 3:20pm"],
-    ["ferry", 15, "Island", "July 23, 2023 4:00pm"],
-    ["bus", 45, "Airport", "July 23, 2023 4:30pm"],
-    ["bus", 45, "Airport", "July 23, 2023 4:30pm"],
-    ["bus", 45, "Airport", "July 23, 2023 4:30pm"],
-    ["bus", 45, "Airport", "July 23, 2023 4:30pm"],
-    ["train", 12, "Central Station", "July 23, 2023 5:00pm"],
-    ["bus", 60, "Mall", "July 23, 2023 5:45pm"],
-    ["bus", 60, "Mall", "July 23, 2023 5:45pm"],
-    ["bus", 60, "Mall", "July 23, 2023 5:45pm"],
-    ["bus", 60, "Mall", "July 23, 2023 5:45pm"],
-    ["bus", 60, "Mall", "July 23, 2023 5:45pm"],
-    ["ferry", 20, "Harbor", "July 23, 2023 6:10pm"],
-    ["ferry", 20, "Harbor", "July 23, 2023 6:10pm"],
-    ["ferry", 20, "Harbor", "July 23, 2023 6:10pm"],
-    ["ferry", 20, "Harbor", "July 23, 2023 6:10pm"],
-    ["ferry", 20, "Harbor", "July 23, 2023 6:10pm"],
-    ["train", 5, "City Park", "July 23, 2023 6:40pm"],
-    ["train", 5, "City Park", "July 23, 2023 6:40pm"],
-    ["train", 5, "City Park", "July 23, 2023 6:40pm"],
-    ["train", 5, "City Park", "July 23, 2023 6:40pm"],
-    ["train", 5, "City Park", "July 23, 2023 6:40pm"],
-    ["train", 5, "City Park", "July 23, 2023 6:40pm"],
-    ["bus", 78, "Library", "July 23, 2023 7:00pm"],
-    ["bus", 78, "Library", "July 23, 2023 7:00pm"],
-    ["bus", 78, "Library", "July 23, 2023 7:00pm"],
-    ["bus", 78, "Library", "July 23, 2023 7:00pm"],
-    ["bus", 78, "Library", "July 23, 2023 7:00pm"],
-    ["ferry", 9, "North Beach", "July 23, 2023 7:20pm"],
-    ["ferry", 9, "North Beach", "July 23, 2023 7:20pm"],
-    ["ferry", 9, "North Beach", "July 23, 2023 7:20pm"],
-    ["ferry", 9, "North Beach", "July 23, 2023 7:20pm"],
-    ["ferry", 9, "North Beach", "July 23, 2023 7:20pm"],
-    ["ferry", 9, "North Beach", "July 23, 2023 7:20pm"],
-    ["ferry", 9, "North Beach", "July 23, 2023 7:20pm"]
-]
+
+
+from datetime import datetime
+import pandas as pd
 
 @app.get("/center_chart")
-def charts(id):
+def charts(id):#id is str, not int
+    id = int(id)
     buffer = io.BytesIO()
+    try:
+        data = json.loads(r.get('history'))
+    except:
+        data = []
     if id == 2:
         modes = [entry[0].capitalize() for entry in data]
         pylab.figure(figsize=(8, 5))
@@ -210,6 +179,7 @@ def charts(id):
     elif id==3:
         passenger_counts = [entry[1] for entry in data]
         pylab.figure(figsize=(8, 5))
+        modes = [entry[0].capitalize() for entry in data]
 
         sns.boxplot(x=modes, y=passenger_counts, palette="Set2")
         pylab.xlabel("Transportation Mode")
@@ -232,6 +202,8 @@ def charts(id):
         pylab.savefig(buffer)
     elif id==5:
 
+        modes = [entry[0].capitalize() for entry in data]
+
         pylab.figure(figsize=(8, 5))
 
         pylab.pie(pd.value_counts(modes), labels=pd.value_counts(modes).index, autopct='%1.1f%%', startangle=140)
@@ -240,6 +212,10 @@ def charts(id):
         #pylab.show()
         pylab.savefig(buffer)
     elif id==6:
+        locations = [entry[2] for entry in data]
+        passenger_counts = [entry[1] for entry in data]
+        modes = [entry[0].capitalize() for entry in data]
+
         pylab.figure(figsize=(8, 5))
         sns.scatterplot(x=locations, y=passenger_counts, hue=modes, palette="Set2")
         pylab.xlabel("Location")
@@ -267,5 +243,39 @@ def charts(id):
         pylab.title("Passenger Counts by Hour and Transportation Mode")
         #pylab.show()
         pylab.savefig(buffer)
-
+    else:
+        print("I am lost")
+        return "Wrong ID"
     return Response(buffer.getvalue())
+
+
+import openai
+with open("/home/gitpod/key", "r") as f:
+    openai.api_key = f.read()[:-1]
+
+ 
+
+@app.get("/chat")
+def chat(prompt):
+  try:
+    data = json.loads(r.get('history'))
+  except:
+    data = []
+  p = [
+          {"role": "system", "content": "You are a helpful assistant for transportation data analyze. You will be given the history\
+           log of the city data, it is in the format of list of \
+          lists, each sub-list means a passenger boarded the vehicle. The format is [vehicle type, vehicle number, stop/station name, time],\
+          you will chat with the city control center. Remember to show your thinking process, give facts first, then reasoning, \
+          then conclusion. Don't worry about saying too much (of cause not be too wordy). The user does NOT want code, they want plain text result, \
+          so analyze these data by yourself. Again, give facts, then reasoning, then conclusion. Do not output text in markdown\
+           format but HTML format. Current date and time:" + datetime.now().strftime("Year: %Y Month: %M Day: $D  Time: %H:%M") + "Here is the data: \n "+str(data)},
+]
+
+  msg = p
+  msg.append( {"role": "user", "content": prompt})
+  response = openai.ChatCompletion.create(
+      model="gpt-3.5-turbo",
+      messages=msg
+  )
+  msg.append({"role":"assistant", "content": response["choices"][0]["message"]["content"]})
+  return response["choices"][0]["message"]["content"]
