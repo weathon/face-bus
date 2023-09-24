@@ -23,9 +23,12 @@ import {
   IonSegmentButton,
   IonTabBar,
   IonTabButton,
+  IonList,
+  IonItem,
+  IonInput,
 } from '@ionic/react';
 import ExploreContainer from '../components/ExploreContainer';
-import { qrCodeOutline, cashOutline, ticketOutline, train, trainOutline, analyticsOutline, happyOutline, homeOutline } from 'ionicons/icons';
+import { qrCodeOutline, cashOutline, ticketOutline, train, trainOutline, analyticsOutline, happyOutline, homeOutline, cardOutline } from 'ionicons/icons';
 import './Home.css';
 import { OverlayEventDetail } from '@ionic/core/components';
 import { setSourceMapRange } from 'typescript';
@@ -33,15 +36,34 @@ import { setSourceMapRange } from 'typescript';
 
 
 const Face: React.FC = () => {
+  const [cardNumber, setCardNumber] = useState('');
+  const handleSubmit = () => {
+    
+    console.log('Card Number Entered:', cardNumber);
+    
+  };
 
+  
+
+ 
 
   return (
     <IonPage>
       <IonHeader>
         
         <IonToolbar>
-        <IonTitle size="large" >My Face</IonTitle>
+        <IonTitle size="large" >Link Card</IonTitle>
         </IonToolbar>
+        <IonList>
+          <br />
+          <br />
+      <IonItem>
+        <IonInput label="Enter Card Number"  value={cardNumber}  onIonChange={(e) => setCardNumber(e.detail.value!)}></IonInput>
+      </IonItem>
+      </IonList>
+      <IonButton expand="block" onClick={handleSubmit}>
+          Submit
+        </IonButton>
       </IonHeader>
       <IonTabBar slot="bottom">
         <IonTabButton tab="home" href="/home">
@@ -55,8 +77,8 @@ const Face: React.FC = () => {
         </IonTabButton>
 
         <IonTabButton tab="face" href="/face">
-          <IonIcon icon={happyOutline} />
-          <IonLabel>My Face</IonLabel>
+        <IonIcon icon={cardOutline} />
+          <IonLabel>Link card</IonLabel>
         </IonTabButton>
       </IonTabBar>
     </IonPage>

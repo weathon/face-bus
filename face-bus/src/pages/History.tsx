@@ -25,7 +25,7 @@ import {
   IonTabButton,
 } from '@ionic/react';
 import ExploreContainer from '../components/ExploreContainer';
-import { qrCodeOutline, cashOutline, ticketOutline, train, trainOutline, analyticsOutline, happyOutline, homeOutline, busOutline, boatOutline } from 'ionicons/icons';
+import { qrCodeOutline, cashOutline, ticketOutline, train, trainOutline, analyticsOutline, happyOutline, homeOutline, busOutline, boatOutline, cardOutline } from 'ionicons/icons';
 import './Home.css';
 import { OverlayEventDetail } from '@ionic/core/components';
 import { setSourceMapRange } from 'typescript';
@@ -108,8 +108,8 @@ const History: React.FC = () => {
         </IonTabButton>
 
         <IonTabButton tab="face" href="/face">
-          <IonIcon icon={happyOutline} />
-          <IonLabel>My Face</IonLabel>
+        <IonIcon icon={cardOutline} />
+          <IonLabel>Link card</IonLabel>
         </IonTabButton>
       </IonTabBar>
     </IonPage>

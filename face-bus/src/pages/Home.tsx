@@ -25,7 +25,7 @@ import {
   IonTabButton,
 } from '@ionic/react';
 import ExploreContainer from '../components/ExploreContainer';
-import { qrCodeOutline, cashOutline, ticketOutline, train, trainOutline, playCircle, homeOutline, save, saveOutline, happyOutline, analyticsOutline } from 'ionicons/icons';
+import { qrCodeOutline, cashOutline, ticketOutline, train, trainOutline, playCircle, homeOutline, save, saveOutline, happyOutline, analyticsOutline, cardOutline } from 'ionicons/icons';
 import './Home.css';
 import { OverlayEventDetail } from '@ionic/core/components';
 import { setSourceMapRange } from 'typescript';
@@ -43,7 +43,7 @@ const Home: React.FC = () => {
 
   const closeModal = () => {
     setShowModal(false);
-    fetch(server_adress+"/balance_and_pass")
+    fetch(server_adress+"/balance_and_pass",{credentials: 'include'})
       .then(x => x.json())
       .then(data => {
         setBal(data[1]);
@@ -65,7 +65,7 @@ const Home: React.FC = () => {
   const [name, setName] = useState("Ashar");
 
   useEffect(() => {
-    fetch(server_adress+"/balance_and_pass")
+    fetch(server_adress+"/balance_and_pass",{credentials: 'include'})
       .then(x => x.json())
       .then(data => {
         setBal(data[1]);
@@ -191,8 +191,8 @@ const Home: React.FC = () => {
         </IonTabButton>
 
         <IonTabButton tab="face" href="/face">
-          <IonIcon icon={happyOutline} />
-          <IonLabel>My Face</IonLabel>
+          <IonIcon icon={cardOutline} />
+          <IonLabel>Link card</IonLabel>
         </IonTabButton>
       </IonTabBar>
     </IonPage>
