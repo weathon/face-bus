@@ -1,7 +1,7 @@
 import {React, useState} from 'react';
 import { IonContent, IonButton, IonGrid, IonRow, IonCol, IonHeader, IonPage, IonTitle, IonToolbar, IonItem, IonList, IonTextarea } from '@ionic/react';
 import './Home.css';
-const address = 'https://8000-weathon-facebus-qiqi4k0uqz8.ws-us104.gitpod.io/'
+const address = 'https://9999-weathon-facebus-qiqi4k0uqz8.ws-us104.gitpod.io/'
 const Home: React.FC = () => {
   const [res, setRes] = useState("")
   return (
@@ -39,7 +39,7 @@ const Home: React.FC = () => {
                     //@ts-ignore
                     // console.log(document.getElementById("text").value)
                     setRes("Loading...")
-                    fetch("https://8000-weathon-facebus-qiqi4k0uqz8.ws-us104.gitpod.io/chat?prompt=" + document.getElementById("text").value, { credentials: 'include' }).then(x => x.json())
+                    fetch("https://9999-weathon-facebus-qiqi4k0uqz8.ws-us104.gitpod.io/chat?prompt=" + document.getElementById("text").value, { credentials: 'include' }).then(x => x.json())
                       .then(data => {
                         // alert(data)
                         setRes(data)

@@ -14,16 +14,16 @@ const ExploreContainer: React.FC<ContainerProps> = () => {
   const send = () => {
     const picture = webcam.snap();
     console.log(picture)
-    fetch("https://8000-weathon-facebus-qiqi4k0uqz8.ws-us104.gitpod.io/onboard", {
+    fetch("https://9999-weathon-facebus-qiqi4k0uqz8.ws-us104.gitpod.io/onboard", {
       method: "POST", 
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
         "img":picture,
-        "bus_number":8,
-        "stop": "Stadium-Chinatown",
-        "vehicle_type": "bus"
+        "bus_number":100,
+        "stop": "Waterfront",
+        "vehicle_type": "ferry"
       }),
     }).then(response => response.json()).then(
       (x)=>{

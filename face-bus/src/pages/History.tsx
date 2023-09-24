@@ -36,9 +36,10 @@ const History: React.FC = () => {
   const [d, setData] = useState([]);
 
  useEffect(()=>{
-  fetch("https://8000-weathon-facebus-qiqi4k0uqz8.ws-us104.gitpod.io/history",{credentials: 'include'})      .then(x => x.json())
+  fetch("https://9999-weathon-facebus-qiqi4k0uqz8.ws-us104.gitpod.io/history",{credentials: 'include'}).then(x => x.json())
   .then(data => {
-    setData(d)
+    console.log(data)
+    setData(data.reverse())
   }
   )
  },[])
@@ -60,7 +61,7 @@ const History: React.FC = () => {
             <IonCard color="primary">
           <IonCardContent>
           
-            <IonIcon icon={busOutline} size="large" />      
+            <IonIcon icon={x[0]=="bus"?busOutline:(x[0]=="ferry"?boatOutline:trainOutline)} size="large" />      
             <h2>Route Number: {x[1]}</h2>
             <p>Stop: {x[2]}t</p>
             <p>Date and Time: {x[3]}</p>

@@ -31,7 +31,7 @@ import { OverlayEventDetail } from '@ionic/core/components';
 import { setSourceMapRange } from 'typescript';
 
 
-const server_adress = "https://8000-weathon-facebus-qiqi4k0uqz8.ws-us104.gitpod.io"
+const server_adress = "https://9999-weathon-facebus-qiqi4k0uqz8.ws-us104.gitpod.io"
 
 const Home: React.FC = () => {
 

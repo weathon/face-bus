@@ -27,18 +27,19 @@ points = 859
 
 r.set('5678',     json.dumps({
     "name": "Ashar",
-    "hasPass": True,
+    "hasPass": False,
     "balance": 500,
     "points": 859
 }))
 r.set('1234',     json.dumps({
     "name": "Wayne",
     "hasPass": True,
-    "balance": 3,
+    "balance": 3.5,
     "points": 8598
 }))
+# print(r.get("history"))
 
-# r.set('history', "{}")
+r.set('history', "{}")
 def set_history(card, Vtype, bus, stop, time):
     #demo only, bad perfomance
     old = json.loads(r.get('history'))
@@ -92,7 +93,7 @@ def onboard(a: Onboard):
     if not card:
         card = 'anonymous'
     # https://www.geeksforgeeks.org/python-strftime-function/
-    set_history(card, a.vehicle_type, a.bus_number, a.stop, time.time().strftime("%Y-%m-%d %H:%M"))
+    set_history(card, a.vehicle_type, a.bus_number, a.stop, datetime.now().strftime("%Y-%m-%d %H:%M"))
     res = json.loads(r.get(card))
 
     if value.split(",")[1] == "pass":
@@ -102,10 +103,10 @@ def onboard(a: Onboard):
             return "Success"
         else:
             return "No Pass"
-
+ 
     elif value.split(",")[1] == "balance":
         if res["balance"] >= 1.5:
-            res["balance"] = 2 + res["balance"]
+            res["balance"] = res["balance"] - 2
             res["points"] = 5 + res["balance"]
             r.set(card, json.dumps(res))
             return "Success"
@@ -136,7 +137,7 @@ def balance_and_pass(card: str | None = Cookie(default=None)):
 @app.get("/link_card")
 def link_card(card):
     response = JSONResponse(content="OK")
-    response.set_cookie(key="card", value=card, samesite="Lax", secure=True, httponly=True)
+    response.set_cookie(key="card", value=card, samesite="none", secure=True, httponly=True)
     return response
 
 
@@ -144,6 +145,7 @@ def link_card(card):
 def history(card: str | None = Cookie(default=None)):
     try:
         his = json.loads(r.get('history'))[card]
+        print(his)
     except:
         return []
     return his
@@ -209,9 +211,14 @@ def charts():#id is str, not int
     # lock.acquire()
     img_list = []
     buffer = io.BytesIO()
-    data = json.loads(r.get('history'))
+    data = []
+    db = json.loads(r.get('history'))
+    for i in db.keys():
+        data.extend(db[i])
+    fakemessage = ""
     if len(data)==0:
          data = fakedata
+         fakemessage = "Demo Data - "
     
     modes = [entry[0].capitalize() for entry in data]
     pylab.figure(figsize=(8, 5))
@@ -219,7 +226,7 @@ def charts():#id is str, not int
     sns.countplot(x=modes, palette="Set3")
     pylab.xlabel("Transportation Mode")
     pylab.ylabel("Count")
-    pylab.title("Distribution of Transportation Modes")
+    pylab.title(fakemessage + "Distribution of Transportation Modes")
     #pylab.show()
     # buffer.clear()
     pylab.savefig("tmp.png")
@@ -231,23 +238,23 @@ def charts():#id is str, not int
     img_list.append(img)
 
 
-    passenger_counts = [entry[1] for entry in data]
-    pylab.figure(figsize=(8, 5))
-    modes = [entry[0].capitalize() for entry in data]
+    # passenger_counts = [entry[1] for entry in data]
+    # pylab.figure(figsize=(8, 5))
+    # modes = [entry[0].capitalize() for entry in data]
 
-    sns.boxplot(x=modes, y=passenger_counts, palette="Set2")
-    pylab.xlabel("Transportation Mode")
-    pylab.ylabel("Passenger Count")
-    pylab.title("Distribution of Passenger Counts by Transportation Mode")
-    #pylab.show()
-    # buffer.clear()
-    pylab.savefig("tmp.png")
+    # sns.boxplot(x=modes, y=passenger_counts, palette="Set2")
+    # pylab.xlabel("Transportation Mode")
+    # pylab.ylabel("Passenger Count")
+    # pylab.title("Distribution of Passenger Counts by Transportation Mode")
+    # #pylab.show()
+    # # buffer.clear()
+    # pylab.savefig("tmp.png")
 
-    # im_arr = np.frombuffer(buffer.getvalue(), dtype=np.uint8)
-    pylab.clf()
-    # img = cv2.imdecode(im_arr, flags=cv2.IMREAD_COLOR)
-    img = cv2.imread("tmp.png")
-    img_list.append(img)
+    # # im_arr = np.frombuffer(buffer.getvalue(), dtype=np.uint8)
+    # pylab.clf()
+    # # img = cv2.imdecode(im_arr, flags=cv2.IMREAD_COLOR)
+    # img = cv2.imread("tmp.png")
+    # img_list.append(img)
 
 
     locations = [entry[2] for entry in data]
@@ -307,7 +314,10 @@ def charts():#id is str, not int
     modes = [entry[0].capitalize() for entry in data]
     passenger_counts = [entry[1] for entry in data]
     locations = [entry[2] for entry in data]
-    timestamps = [datetime.strptime(entry[3], "%B %d, %Y %I:%M%p") for entry in data]
+    try:
+        timestamps = [datetime.strptime(entry[3], "%B %d, %Y %I:%M%p") for entry in data]
+    except:
+        timestamps = [datetime.strptime(entry[3], "%Y-%m-%d %H:%M") for entry in data]
 
 
     df = pd.DataFrame({'Hour': [ts.hour for ts in timestamps], 'Mode': modes, 'Passenger Count': passenger_counts})
