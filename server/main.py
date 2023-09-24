@@ -149,3 +149,123 @@ def history(card: str | None = Cookie(default=None)):
     return his
     
 
+import pylab
+
+data = [
+    ["bus", 90, "UBCO", "July 23, 2023 3:20pm"],
+    ["bus", 90, "UBCO", "July 23, 2023 3:20pm"],
+    ["bus", 90, "UBCO", "July 23, 2023 3:20pm"],
+    ["bus", 90, "UBCO", "July 23, 2023 3:20pm"],
+    ["train", 8, "Downtown", "July 23, 2023 3:20pm"],
+    ["ferry", 15, "Island", "July 23, 2023 4:00pm"],
+    ["bus", 45, "Airport", "July 23, 2023 4:30pm"],
+    ["bus", 45, "Airport", "July 23, 2023 4:30pm"],
+    ["bus", 45, "Airport", "July 23, 2023 4:30pm"],
+    ["bus", 45, "Airport", "July 23, 2023 4:30pm"],
+    ["train", 12, "Central Station", "July 23, 2023 5:00pm"],
+    ["bus", 60, "Mall", "July 23, 2023 5:45pm"],
+    ["bus", 60, "Mall", "July 23, 2023 5:45pm"],
+    ["bus", 60, "Mall", "July 23, 2023 5:45pm"],
+    ["bus", 60, "Mall", "July 23, 2023 5:45pm"],
+    ["bus", 60, "Mall", "July 23, 2023 5:45pm"],
+    ["ferry", 20, "Harbor", "July 23, 2023 6:10pm"],
+    ["ferry", 20, "Harbor", "July 23, 2023 6:10pm"],
+    ["ferry", 20, "Harbor", "July 23, 2023 6:10pm"],
+    ["ferry", 20, "Harbor", "July 23, 2023 6:10pm"],
+    ["ferry", 20, "Harbor", "July 23, 2023 6:10pm"],
+    ["train", 5, "City Park", "July 23, 2023 6:40pm"],
+    ["train", 5, "City Park", "July 23, 2023 6:40pm"],
+    ["train", 5, "City Park", "July 23, 2023 6:40pm"],
+    ["train", 5, "City Park", "July 23, 2023 6:40pm"],
+    ["train", 5, "City Park", "July 23, 2023 6:40pm"],
+    ["train", 5, "City Park", "July 23, 2023 6:40pm"],
+    ["bus", 78, "Library", "July 23, 2023 7:00pm"],
+    ["bus", 78, "Library", "July 23, 2023 7:00pm"],
+    ["bus", 78, "Library", "July 23, 2023 7:00pm"],
+    ["bus", 78, "Library", "July 23, 2023 7:00pm"],
+    ["bus", 78, "Library", "July 23, 2023 7:00pm"],
+    ["ferry", 9, "North Beach", "July 23, 2023 7:20pm"],
+    ["ferry", 9, "North Beach", "July 23, 2023 7:20pm"],
+    ["ferry", 9, "North Beach", "July 23, 2023 7:20pm"],
+    ["ferry", 9, "North Beach", "July 23, 2023 7:20pm"],
+    ["ferry", 9, "North Beach", "July 23, 2023 7:20pm"],
+    ["ferry", 9, "North Beach", "July 23, 2023 7:20pm"],
+    ["ferry", 9, "North Beach", "July 23, 2023 7:20pm"]
+]
+
+@app.get("/center_chart")
+def charts(id):
+    buffer = io.BytesIO()
+    if id == 2:
+        modes = [entry[0].capitalize() for entry in data]
+        pylab.figure(figsize=(8, 5))
+
+        sns.countplot(x=modes, palette="Set3")
+        pylab.xlabel("Transportation Mode")
+        pylab.ylabel("Count")
+        pylab.title("Distribution of Transportation Modes")
+        #pylab.show()
+        pylab.savefig(buffer)
+        
+    elif id==3:
+        passenger_counts = [entry[1] for entry in data]
+        pylab.figure(figsize=(8, 5))
+
+        sns.boxplot(x=modes, y=passenger_counts, palette="Set2")
+        pylab.xlabel("Transportation Mode")
+        pylab.ylabel("Passenger Count")
+        pylab.title("Distribution of Passenger Counts by Transportation Mode")
+        #pylab.show()
+        pylab.savefig(buffer)
+
+    elif id==4:
+
+        locations = [entry[2] for entry in data]
+        pylab.figure(figsize=(8, 5))
+
+
+        sns.countplot(y=locations, palette="viridis", order=pd.value_counts(locations).index)
+        pylab.xlabel("Count")
+        pylab.ylabel("Location")
+        pylab.title("Frequency of Locations")
+        #pylab.show()
+        pylab.savefig(buffer)
+    elif id==5:
+
+        pylab.figure(figsize=(8, 5))
+
+        pylab.pie(pd.value_counts(modes), labels=pd.value_counts(modes).index, autopct='%1.1f%%', startangle=140)
+        pylab.axis('equal')
+        pylab.title("Distribution of Transportation Modes")
+        #pylab.show()
+        pylab.savefig(buffer)
+    elif id==6:
+        pylab.figure(figsize=(8, 5))
+        sns.scatterplot(x=locations, y=passenger_counts, hue=modes, palette="Set2")
+        pylab.xlabel("Location")
+        pylab.ylabel("Passenger Count")
+        pylab.title("Passenger Counts vs. Locations")
+        pylab.xticks(rotation=45)
+        #pylab.show()
+        pylab.savefig(buffer)
+
+    elif id==1:
+        modes = [entry[0].capitalize() for entry in data]
+        passenger_counts = [entry[1] for entry in data]
+        locations = [entry[2] for entry in data]
+        timestamps = [datetime.strptime(entry[3], "%B %d, %Y %I:%M%p") for entry in data]
+
+
+        df = pd.DataFrame({'Hour': [ts.hour for ts in timestamps], 'Mode': modes, 'Passenger Count': passenger_counts})
+        hourly_mode_counts = df.groupby(['Hour', 'Mode']).size().unstack().fillna(0)
+
+        pylab.figure(figsize=(8, 5))
+
+        sns.heatmap(hourly_mode_counts, cmap="YlGnBu")
+        pylab.xlabel("Transportation Mode")
+        pylab.ylabel("Hour of the Day")
+        pylab.title("Passenger Counts by Hour and Transportation Mode")
+        #pylab.show()
+        pylab.savefig(buffer)
+
+    return Response(buffer.getvalue())
