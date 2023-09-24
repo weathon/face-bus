@@ -5,6 +5,7 @@ import { IonButton, IonCard, IonCardContent, IonContent } from '@ionic/react';
 
 interface ContainerProps { }
 var webcam: any; //forgot what i changed why
+const data = ["A","B","C","D"];
 
 const ExploreContainer: React.FC<ContainerProps> = () => {
 
@@ -62,12 +63,16 @@ const ExploreContainer: React.FC<ContainerProps> = () => {
   return (
     <>
       {/* https://developer.mozilla.org/en-US/docs/Web/API/Media_Capture_and_Streams_API/Taking_still_photos */}
-      <video id="webcam" autoPlay width={window.innerWidth}></video>
+      <video id="webcam" autoPlay width={window.innerWidth} ></video>
       <canvas id="canvas" className="d-none" hidden></canvas>
       <audio id="snapSound" preload="auto"></audio>
       <audio id="success" preload="auto" src="src/success.mp3"></audio>
       <audio id="error" preload="auto" src="src/error.mp3"></audio>
-      <IonButton expand="block" onClick={send}>Snap</IonButton>
+      {/* {
+        data.map(x=>(
+        ))
+      } */}
+          <IonButton expand="block" onClick={send}>Snap</IonButton>
 
       <IonCard color={message=="Success"? "success" :"danger"} style={{visibility:hid}}>
         <IonCardContent>

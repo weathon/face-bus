@@ -25,15 +25,15 @@ balance = 3.5
 points = 859
 
 
-r.set('3450-7890-0765-9871',     json.dumps({
+r.set('7890',     json.dumps({
     "name": "Ashar",
     "hasPass": True,
     "balance": 500,
     "points": 859
 }))
-r.set('3450-8919-1201-0847',     json.dumps({
+r.set('1234',     json.dumps({
     "name": "Wayne",
-    "hasPass": False,
+    "hasPass": True,
     "balance": 3,
     "points": 8598
 }))
@@ -42,7 +42,11 @@ r.set('history', "{}")
 def set_history(card, Vtype, bus, stop, time):
     #demo only, bad perfomance
     old = json.loads(r.get('history'))
-    old[card].append([Vtype, bus, stop, time])
+    try:
+        old[card].append([Vtype, bus, stop, time])
+    except:
+        old[card] = [[Vtype, bus, stop, time]]
+
     r.set('history', json.dumps(old))
 
 # print(r.get('10932'))
@@ -85,8 +89,10 @@ def onboard(a: Onboard):
     if value == "":  # no qrcode, detect face
         return "No QR-Code"
     card = value.split(",")[0]
-    set_history(a.vehicle_type, card, a.bus_number, a.stop, time.time())
-    res = r.get(card)
+    if not card:
+        card = '1234'
+    set_history(card, a.vehicle_type, a.bus_number, a.stop, time.time())
+    res = json.loads(r.get(card))
 
     if value.split(",")[1] == "pass":
         if res["hasPass"]:
@@ -139,4 +145,3 @@ def history(card: str | None = Cookie(default=None)):
     return his
     
 
-    
