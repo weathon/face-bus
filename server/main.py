@@ -25,7 +25,7 @@ balance = 3.5
 points = 859
 
 
-r.set('7890',     json.dumps({
+r.set('5678',     json.dumps({
     "name": "Ashar",
     "hasPass": True,
     "balance": 500,
@@ -268,7 +268,7 @@ def chat(prompt):
           you will chat with the city control center. Remember to show your thinking process, give facts first, then reasoning, \
           then conclusion. Don't worry about saying too much (of cause not be too wordy). The user does NOT want code, they want plain text result, \
           so analyze these data by yourself. Again, give facts, then reasoning, then conclusion. Do not output text in markdown\
-           format but HTML format. Current date and time:" + datetime.now().strftime("Year: %Y Month: %M Day: $D  Time: %H:%M") + "Here is the data: \n "+str(data)},
+           format but HTML format (but rather not use any special tags). Current date and time:" + datetime.now().strftime("Year: %Y Month: %m Day: %d Time: %H:%M") + "Here is the data: \n "+str(data)},
 ]
 
   msg = p
