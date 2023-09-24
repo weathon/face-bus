@@ -9,7 +9,18 @@ const ExploreContainer: React.FC<ContainerProps> = () => {
   var webcam: any;
   const send = () => {
     const picture = webcam.snap();
-    alert(picture)
+    console.log(picture)
+    fetch("https://8000-weathon-facebus-qiqi4k0uqz8.ws-us104.gitpod.io/onboard", {
+      method: "POST", 
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        "img":picture,
+        "bus_number":8
+      }),
+    });
+
   }
   useEffect(() => {
     //fotgot this
