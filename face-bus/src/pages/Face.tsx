@@ -54,12 +54,19 @@ const Face: React.FC = () => {
 
   return (
     <IonPage>
-      <IonHeader>
-        
+    <IonHeader>
         <IonToolbar>
-        <IonTitle size="large" >Link Card</IonTitle>
+          <IonTitle>Link My Card</IonTitle>
         </IonToolbar>
-        <IonList>
+      </IonHeader>
+      <IonContent fullscreen >
+        <IonHeader collapse="condense">
+          <IonToolbar>
+            <IonTitle size="large" >Link My Card</IonTitle>
+          </IonToolbar>
+        </IonHeader>
+
+      <IonList>
           <br />
           <br />
       <IonItem>
@@ -69,7 +76,7 @@ const Face: React.FC = () => {
       <IonButton expand="block" onClick={handleSubmit}>
           Submit
         </IonButton>
-      </IonHeader>
+        </IonContent>
       <IonTabBar slot="bottom">
         <IonTabButton tab="home" href="/home">
           <IonIcon icon={homeOutline} />
@@ -85,7 +92,7 @@ const Face: React.FC = () => {
         <IonIcon icon={cardOutline} />
           <IonLabel>Link card</IonLabel>
         </IonTabButton>
-      </IonTabBar>
+        </IonTabBar>
     </IonPage>
 
 
